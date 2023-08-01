@@ -91,3 +91,4 @@ def delete_picture(id):
         return "", 204
     else:
         return {"message": "picture not found"}, 404
+
