@@ -35,7 +35,8 @@ def count():
 ######################################################################
 @app.route("/picture", methods=["GET"])
 def get_pictures():
-    pass
+     """Return all pictures"""
+     return jsonify(data), 200
 
 ######################################################################
 # GET A PICTURE
@@ -44,7 +45,12 @@ def get_pictures():
 
 @app.route("/picture/<int:id>", methods=["GET"])
 def get_picture_by_id(id):
-    pass
+    """Return picture with the given id"""
+    picture = next((item for item in data if item["id"] == id), None)
+    if picture:
+        return jsonify(picture), 200
+    else:
+        return {"message": "Picture not found"}, 404
 
 
 ######################################################################
@@ -52,7 +58,12 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    pass
+    """Create a new picture"""
+    picture = request.get_json()
+    if any(p["id"] == picture["id"] for p in data):
+        return {"Message": f"picture with id {picture['id']} already present"}, 302
+    data.append(picture)
+    return picture, 201
 
 ######################################################################
 # UPDATE A PICTURE
@@ -61,11 +72,23 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    pass
+    picture = request.get_json()
+    index = next((i for i, p in enumerate(data) if p["id"] == id), None)
+    if index is not None:
+        data[index] = picture
+        return picture, 200
+    else:
+        return {"message": "picture not found"}, 404
 
 ######################################################################
 # DELETE A PICTURE
 ######################################################################
 @app.route("/picture/<int:id>", methods=["DELETE"])
 def delete_picture(id):
-    pass
+    index = next((i for i, p in enumerate(data) if p["id"] == id), None)
+    if index is not None:
+        del data[index]
+        return "", 204
+    else:
+        return {"message": "picture not found"}, 404
+
